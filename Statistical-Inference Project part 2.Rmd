@@ -1,0 +1,73 @@
+---
+title: "Statical Analysis on Tooth Growth of Guinea Pigs"
+author: "Bamidele Tella"
+date: "8/27/2020"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# OVERVIEW
+This is the part 2 of the final project from Coursera's statistical inference course. In this project, we perform inferential analysis on one of the data in R dataset named ToothGrowth. At the end of the analysis, we shall see the relation of between the length of tooth of guinea pigs and supplements given. The dosage effect would also be considered.
+
+# ANALYSIS
+## Loading Packages
+First, we load the packages need to perform analysis as well as the data set ToothGrowth.
+```{r}
+library(ggplot2)
+library(datasets)
+data(ToothGrowth)
+```
+
+## Summary of Data
+Next, we look at the first 5 rows of the data with the head function in R. Then, we summarise the whole data to view the ranges. We then assign the required class to needed for analysis. Then we take a look at the data again with the str function.
+```{r}
+head(ToothGrowth)
+summary(ToothGrowth)
+ToothGrowth$dose<-as.factor(ToothGrowth$dose)
+str(ToothGrowth)
+```
+
+## Exploratory Analysis
+Now, we visualise the data to get a more detailed idea of the relationship.
+```{r}
+gtooth <-ggplot(ToothGrowth,aes(x=dose, y=len, fill=supp))
+gtooth <- gtooth + geom_bar(stat = "identity") + facet_grid(.~supp)
+gtooth <- gtooth + labs(title = "A graph of Tooth Length relative to Supplements and Dosage",x="Dosage",y="Tooth Length")
+gtooth
+```
+
+## T-Test
+### Tooth Length relative to Supplements given.
+First, we take the t test of tooth length relative to supplements types.
+```{r}
+t.test(len~supp,data=ToothGrowth, paired = F,var.equal=F)
+```
+From our t test analysis, we see that we have a p value of 0.06 which is above the 5% and confidence interval contains zero(0). This implies that we fail to reject our hypothesis.
+
+### Tooth Length relative to different Dosage Administered
+Next, we take a t test analysis of the Tooth Length relative to each of the three different dosage given.
+```{r}
+dose1<-subset(ToothGrowth,dose %in% c(0.5,1))
+dose2<- subset(ToothGrowth,dose %in% c(0.5,2.0))
+dose3<- subset(ToothGrowth,dose %in% c(1.0,2.0))
+t.test(len~dose,data = dose1, paired=F,var.equal=F)
+t.test(len~dose,data = dose2, paired=F,var.equal=F)
+t.test(len~dose,data = dose3, paired=F,var.equal=F)
+```
+As analysed above, we see that each dosage analysis relative to length has a p value of approximately zero(0) which is less than the 5% level with non-zero(0) confidence levels. Therefore we reject the hypothesis due to the low p value.
+
+# Assumption
+We assume that the supplements administered has no effect on the growth length of the tooth of guinea pigs. 
+
+# Conclusion
+From the analysis, we see at first that the supplements type has no effect on the tooth growth, but after a closer look, we see that the supplements dosage has an effect on the tooth growth
+
+
+
+
+
